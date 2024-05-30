@@ -44,7 +44,7 @@ Implementation of Convolutional Neural Networks
 Introduction
 A convolutional neural network (CNN) is implemented to classify images in an animal dataset. CNNs are effective in computer vision tasks due to their ability to process data with a grid-like structure.
 
-Architecture
+Architecture:
 3 convolutional layers with 32, 64, and 128 filters, ReLu activation function.
 Maxpooling layers, flatten, dense, and dropout layers.
 Use of data augmentation to improve training.
@@ -55,12 +55,19 @@ Basic Image Handling
 Introduction
 More than 100 image formats, such as JPEG, PNG, DICOM, NIfTI, TIFF, and others, are explored. Handling these formats is performed using various Python modules and packages to extract and manipulate useful data.
 
-Exercises
+Exercises:
 Open and display images using libraries such as Matplotlib, OpenCV, Scikit-Image, and PIL.
 Obtain image information such as extension, size, and data type.
 Change the color space of images.
 Display images in different color channels.
 Convert images to grayscale and perform size reduction operations.
-Conclusion
+
+Conclusion:
 This project provides a comprehensive view of various pattern recognition and data analysis techniques and tools in Python. From basic image handling to the implementation of complex models like CNNs and PCA, it covers multiple essential aspects for developing computer vision and machine learning applications.
 
+References
+Numpy
+Scipy
+Scikit-learn
+OpenCV
+TensorFlow
