@@ -8,12 +8,12 @@ from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 
 # Ruta al dataset de entrenamiento
-dataset_path = r'C:\Users\mawis\OneDrive\Escritorio\PatronesFinalFinal\dataset'
+dataset_path = r'PATH'
 
 # Rutas a las imágenes específicas a reconstruir
 image_paths = [
-    r'C:\Users\mawis\OneDrive\Escritorio\PatronesFinalFinal\dataset\juliofrente.jpg',
-    r'C:\Users\mawis\OneDrive\Escritorio\PatronesFinalFinal\dataset\maufrente.jpg'
+    r'file.jpg',
+    r'.jpg'
 ]
 
 # Cargar Haar Cascade para la detección de rostros
