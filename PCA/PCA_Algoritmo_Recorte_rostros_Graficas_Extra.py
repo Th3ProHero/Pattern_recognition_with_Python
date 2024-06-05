@@ -30,7 +30,7 @@ def detect_face(image):
     return face
 
 def load_images_from_folder(folder):
-    print("\nCargando imagenes desde el folder dataset\n")
+    print("\nCargando imágenes desde el folder dataset\n")
     images = []
     for filename in os.listdir(folder):
         if filename.endswith(".jpg") or filename.endswith(".bmp"):
@@ -44,7 +44,7 @@ def load_images_from_folder(folder):
     return np.array(images)
 
 def load_specific_images(image_paths):
-    print("Cargando imagenes que serán reconstruidas\n")
+    print("Cargando imágenes que serán reconstruidas\n")
     images = []
     for img_path in image_paths:
         img = Image.open(img_path).convert('L')  # Convertir a escala de grises
@@ -62,7 +62,7 @@ n_samples, n_features = faces_train.shape
 
 # Cargar las imágenes específicas a reconstruir
 faces_test = load_specific_images(image_paths)
-print("Imagenes para reconstruir cargadas\n")
+print("Imágenes para reconstruir cargadas\n")
 
 # Estandarizar los datos de entrenamiento
 scaler = StandardScaler()
@@ -71,10 +71,10 @@ faces_train_std = scaler.fit_transform(faces_train)
 # Calcular la matriz de covarianza
 print("Generando matriz de covarianza\n")
 cov_matrix = np.cov(faces_train_std.T)
-print(len(cov_matrix))
+print(f"Tamaño de la matriz de covarianza: {len(cov_matrix)}")
 
 # Realizar la descomposición en valores propios
-print("Descomposicion en valores propios\n")
+print("Descomposición en valores propios\n")
 eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
 
 # Ordenar los valores y vectores propios
@@ -98,7 +98,7 @@ faces_reconstructed = scaler.inverse_transform(faces_reconstructed)
 # Calcular el MSE para cada imagen (implementación propia)
 mse_reconstructed = [mean_squared_error(faces_test[i], faces_reconstructed[i]) for i in range(len(faces_test))]
 average_mse_reconstructed = np.mean(mse_reconstructed)
-print(f"Error medio cuadrático de las imágenes reconstruidas (propia implementación): {average_mse_reconstructed}")
+print(f"Error medio cuadrático de las imágenes reconstruidas (propia implementación): {average_mse_reconstructed:.4f}")
 
 # Utilizar PCA de scikit-learn para comparación
 pca = PCA(n_components=k)
@@ -110,7 +110,7 @@ faces_reconstructed_sklearn = scaler.inverse_transform(faces_reconstructed_sklea
 # Calcular el MSE para cada imagen (sklearn)
 mse_reconstructed_sklearn = [mean_squared_error(faces_test[i], faces_reconstructed_sklearn[i]) for i in range(len(faces_test))]
 average_mse_reconstructed_sklearn = np.mean(mse_reconstructed_sklearn)
-print(f"Error medio cuadrático de las imágenes reconstruidas (sklearn): {average_mse_reconstructed_sklearn}")
+print(f"Error medio cuadrático de las imágenes reconstruidas (sklearn): {average_mse_reconstructed_sklearn:.4f}")
 
 # Visualizar las imágenes originales y reconstruidas
 fig, ax = plt.subplots(2, 2, figsize=(10, 10))
@@ -124,6 +124,7 @@ for i in range(2):
     ax[i, 1].set_title('Reconstruida')
     ax[i, 1].axis('off')
 
+plt.suptitle('Imágenes Originales y Reconstruidas (Propia Implementación)')
 plt.show()
 
 # Visualizar las imágenes reconstruidas con scikit-learn PCA
@@ -138,8 +139,10 @@ for i in range(2):
     ax[i, 1].set_title('Reconstruida (sklearn)')
     ax[i, 1].axis('off')
 
+plt.suptitle('Imágenes Originales y Reconstruidas (sklearn)')
 plt.show()
 
+# Gráfico de la varianza explicada
 explained_variance_ratio = np.cumsum(eigenvalues / np.sum(eigenvalues))
 
 plt.figure(figsize=(8, 5))
