@@ -1,12 +1,19 @@
 import tensorflow as tf
-import tensorflow
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 import os
-from tensorflow.python import pywrap_tensorflow as _pywrap_tensorflow
-import scipy  # Asegúrate de importar scipy
+
+# Configuración para usar la GPU
+physical_devices = tf.config.list_physical_devices('GPU')
+if physical_devices:
+    try:
+        tf.config.experimental.set_memory_growth(physical_devices[0], True)
+    except:
+        # Invalid device or cannot modify virtual devices once initialized.
+        pass
 
 # Definir el directorio del dataset
 train_dir = 'dataset/train'
@@ -54,20 +61,20 @@ validation_generator = test_datagen.flow_from_directory(
 # Definir la arquitectura del modelo
 model = Sequential([
     Conv2D(32, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
+    BatchNormalization(),
     MaxPooling2D((2, 2)),
     Conv2D(64, (3, 3), activation='relu'),
+    BatchNormalization(),
     MaxPooling2D((2, 2)),
     Conv2D(128, (3, 3), activation='relu'),
+    BatchNormalization(),
     MaxPooling2D((2, 2)),
     Flatten(),
     Dense(512, activation='relu'),
+    BatchNormalization(),
     Dropout(0.5),
     Dense(1, activation='sigmoid')
 ])
-
-# Verificar que el modelo se ha creado correctamente
-print("debugg model")
-print(model)
 
 # Compilar el modelo
 model.compile(loss='binary_crossentropy',
@@ -77,13 +84,18 @@ model.compile(loss='binary_crossentropy',
 # Resumen del modelo
 model.summary()
 
+# Configurar callbacks
+checkpoint = ModelCheckpoint('best_model.h5', monitor='val_accuracy', save_best_only=True, mode='max')
+early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
 # Entrenar el modelo
 history = model.fit(
     train_generator,
     steps_per_epoch=train_generator.samples // batch_size,
-    epochs=10,  # Reducimos el número de épocas para demostración
+    epochs=50,  # Aumentamos el número de épocas
     validation_data=validation_generator,
-    validation_steps=validation_generator.samples // batch_size
+    validation_steps=validation_generator.samples // batch_size,
+    callbacks=[checkpoint, early_stopping]
 )
 
 # Evaluar el modelo con el conjunto de test
@@ -91,4 +103,4 @@ test_loss, test_acc = model.evaluate(validation_generator)
 print(f'\nTest accuracy: {test_acc:.4f}')
 
 # Guardar el modelo entrenado
-model.save('modelo_perros_gatos.h5')
+model.save('modelo_perros_gatos_final.h5')
